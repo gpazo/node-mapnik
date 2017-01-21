@@ -1,5 +1,5 @@
 {
-  "name": "mapnik",
+  "name": "@langa/mapnik",
   "description": "Tile rendering library for node",
   "url": "http://github.com/mapnik/node-mapnik",
   "homepage": "http://mapnik.org",
