@@ -53,7 +53,7 @@ before_install:
  - scripts/validate_tag.sh
  - export COVERAGE=${COVERAGE:-false}
  - if [[ $(uname -s) == 'Linux' ]] && [[ ${CXX:-"notset"} == "notset" ]]; then
-     git clone --depth 1 https://github.com/mapbox/mason.git ./.mason;
+     git clone https://github.com/mapbox/mason.git ./.mason;
      cd .mason && git checkout 2d47ca993e05787b89f363c7559df5c83f8e0e8b && cd ..;
      export PATH=$(pwd)/.mason:${PATH};
      mason install clang 3.8.0;
