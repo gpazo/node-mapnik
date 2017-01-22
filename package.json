@@ -4,8 +4,8 @@
   "url": "http://github.com/mapnik/node-mapnik",
   "homepage": "http://mapnik.org",
   "author": "Dane Springmeyer <dane@mapbox.com> (mapnik.org)",
-  "version": "3.0.9-dev1",
-  "mapnik_version":"3.0.9",
+  "version": "3.0.9-dev2",
+  "mapnik_version": "3.0.9",
   "main": "./lib/mapnik.js",
   "binary": {
     "module_name": "mapnik",
