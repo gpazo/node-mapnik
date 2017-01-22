@@ -54,11 +54,11 @@
         4267
       ],
       'include_dirs': [
-        './deps/clipper/',
-        './node_modules/mapnik-vector-tile/src/',
         './src',
+        './deps/clipper/',
         "<!(node -e \"require('nan')\")",
-        './node_modules/protozero/include/',
+        "<!(node -p "require('path').dirname(require.resolve('mapnik-vector-tile')) + '/src'\")",
+        "<!(node -p "require('path').dirname(require.resolve('protozero')) + '/include'\")"
       ],
       'defines': [
           'MAPNIK_GIT_REVISION="<!@(mapnik-config --git-describe)"',
