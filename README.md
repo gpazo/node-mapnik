@@ -1,172 +1,73 @@
 # node-mapnik
 
-Bindings to [Mapnik](http://mapnik.org) for [node](http://nodejs.org).
+Bindings to [Mapnik](http://mapnik.org) for [node](http://nodejs.org). 
 
-[![NPM](https://nodei.co/npm/mapnik.png?downloads=true&downloadRank=true)](https://nodei.co/npm/mapnik/)
+[![NPM version][npm-image]][npm-url]
+[![Build status][ci-image]][ci-url]
+[![Dependency Status][daviddm-image]][daviddm-url]
 
-[![Build Status](https://secure.travis-ci.org/mapnik/node-mapnik.png)](https://travis-ci.org/mapnik/node-mapnik)
-[![Build status](https://ci.appveyor.com/api/projects/status/ju29v1vcpif2iww8?svg=true)](https://ci.appveyor.com/project/Mapbox/node-mapnik)
-[![Coverage Status](https://coveralls.io/repos/mapnik/node-mapnik/badge.svg)](https://coveralls.io/r/mapnik/node-mapnik)
+## Install
 
-## Usage
+We do not provide pre-built binaries; rather, we've tested compilation on a few common platforms:
 
-Render a map from a stylesheet:
+### Ubuntu 12.04 and 14.04
 
-```js
-var mapnik = require('mapnik');
-var fs = require('fs');
+#### 1. Install apt packages
 
-// register fonts and datasource plugins
-mapnik.register_default_fonts();
-mapnik.register_default_input_plugins();
+```sh
+# install apt sources
+sudo apt-get install curl software-properties-common
+sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+sudo add-apt-repository ppa:mapnik/nightly-trunk
+sudo apt-get update
 
-var map = new mapnik.Map(256, 256);
-map.load('./test/stylesheet.xml', function(err,map) {
-    if (err) throw err;
-    map.zoomAll();
-    var im = new mapnik.Image(256, 256);
-    map.render(im, function(err,im) {
-      if (err) throw err;
-      im.encode('png', function(err,buffer) {
-          if (err) throw err;
-          fs.writeFile('map.png',buffer, function(err) {
-              if (err) throw err;
-              console.log('saved map image to map.png');
-          });
-      });
-    });
-});
+# install mapnik libs
+sudo apt-get install libmapnik libmapnik-dev mapnik-input-plugin-gdal mapnik-input-plugin-postgis mapnik-utils mapnik-vector-tile libstdc++-5-dev clang-3.8 make  
 ```
 
-Convert a jpeg image to a png:
+#### 2. Setup environment
 
-```js
-var mapnik = require('mapnik');
-new mapnik.Image.open('input.jpg').save('output.png');
+```sh
+export CXX=clang++-3.8
+export CC=clang-3.8
 ```
 
-Convert a shapefile to GeoJSON:
+### OSX
 
-```js
-var mapnik = require('mapnik');
-mapnik.register_datasource(path.join(mapnik.settings.paths.input_plugins,'shape.input'));
-var ds = new mapnik.Datasource({type:'shape',file:'test/data/world_merc.shp'});
-var featureset = ds.featureset()
-var geojson = {
-  "type": "FeatureCollection",
-  "features": [
-  ]
-}
-var feat = featureset.next();
-while (feat) {
-    geojson.features.push(JSON.parse(feat.toJSON()));
-    feat = featureset.next();
-}
-fs.writeFileSync("output.geojson",JSON.stringify(geojson,null,2));
+#### 1. Install brew packages
+
+```sh
+brew install freetype harfbuzz libpng libtiff proj icu4c jpeg webp boost gdal postgresql cairo llvm
 ```
 
-For more sample code see [the tests](./test) and [sample code](https://github.com/mapnik/node-mapnik-sample-code).
+#### 2. Compile mapnik
 
-## Depends
-
-* Node v0.10.x or v0.12.x (v0.12.x support requires node-mapnik >= v3.1.6)
-* C++11 compatible C++ runtime library
-
-
-## Troubleshooting
-
-If you hit an error like:
-
-    Error: /usr/lib/x86_64-linux-gnu/libstdc++.so.6: version `GLIBCXX_3.4.18' not found
-
-This means your Linux distributions libstdc++ library is too old (for example you are running Ubuntu Precise rather than Trusty). To work around this upgrade libstdc++:
-
-    sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-    sudo apt-get update -q
-    sudo apt-get install -y libstdc++6
-
-To upgrade libstdc++ on travis (without sudo) you can do:
-
-```yaml
-language: cpp
-
-sudo: false
-
-addons:
-  apt:
-    sources:
-     - ubuntu-toolchain-r-test
-    packages:
-     - libstdc++6 # upgrade libstdc++ on linux to support C++11
+```sh
+git clone https://github.com/mapnik/mapnik.git
+cd mapnik
+git checkout v3.0.9
+git submodule update --init
+./configure CXX=/usr/local/opt/llvm/bin/clang++-3.8 CC=/usr/local/opt/llvm/bin/clang-3.8
+make
+sudo make install
 ```
 
+## `npm install @langa/mapnik`
 
-## Installing
+## What is this Fork?
 
-Just do:
-
-    npm install mapnik@3.x
-
-Note: This will install the latest node-mapnik 3.x series, which is recommended. There is also an [1.x series](https://github.com/mapnik/node-mapnik/tree/1.x) which maintains API compatibility with Mapnik 2.3.x and 2.2.x and a [v0.7.x series](https://github.com/mapnik/node-mapnik/tree/v0.7.x) which is not recommended unless you need to support Mapnik 2.1 or older.
-
-By default, binaries are provided for:
-
- - 64 bit OS X 10.9, 64 bit Linux (>= Ubuntu Trusty), and 64/32 bit Windows
- - several node versions:
-   - [versions forLinux/Mac](<https://github.com/mapnik/node-mapnik/blob/master/.travis.yml#L19-L47>)
-   - [versions for Windows](<https://github.com/mapnik/node-mapnik/blob/master/appveyor.yml#L9-L32>)
-
-On those platforms no external dependencies are needed.
-
-Other platforms will fall back to a source compile: see [Source Build](#source-build) for details.
-
-Binaries started being provided at node-mapnik >= 1.4.2 for OSX and Linux and at 1.4.8 for Windows.
-
-### Windows specific
-
-**NOTE:** Windows binaries for the **3.x** series require the Visual C++ Redistributable Packages for **Visual Studio 2015**:
-
-  - <https://mapbox.s3.amazonaws.com/windows-builds/visual-studio-runtimes/vcredist-VS2015/vcredist_x64.exe>
-  - <https://mapbox.s3.amazonaws.com/windows-builds/visual-studio-runtimes/vcredist-VS2015/vcredist_x86.exe>
-
-See https://github.com/mapnik/node-mapnik/wiki/WindowsBinaries for more details.
-
-The **1.x** series require the Visual C++ Redistributable Packages for **Visual Studio 2013**:
-
- - http://www.microsoft.com/en-us/download/details.aspx?id=40784
-
-
-## Source Build
-
-To build from source you need:
-
- - Mapnik >= v3.0.10
-
-Install Mapnik using the instructions at: https://github.com/mapnik/mapnik/wiki/Mapnik-Installation
-
-Confirm that the `mapnik-config` program is available and on your `${PATH}`.
-
-Then run (within the cloned `node-mapnik` directory:
-
-    npm install --build-from-source
-
-### Windows specific
-
-Windows builds are maintained in https://github.com/mapbox/windows-builds
-
-
-## Using node-mapnik from your node app
-
-To require node-mapnik as a dependency of another package put in your package.json:
-
-    "dependencies"  : { "mapnik":"*" } // replace * with a given semver version string
-
-## Tests
-
-To run the tests do:
-  
-    npm test
+[node-mapnik](https://github.com/mapnik/node-mapnik) module is really difficult to install properly, and bad patch versions have broken our builds in the past. We will keep this module up-to-date with the upstream work to the extent it does not cause more build/install failures.
 
 ## License
 
-  BSD, see LICENSE.txt
+BSD
+
+## Maintained By
+[<img src='http://i.imgur.com/Y03Jgmf.png' height='64px'>](http://langa.io)</img>
+
+[npm-image]: https://img.shields.io/npm/v/@langa/mapnik.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/@langa/mapnik
+[ci-image]: https://img.shields.io/travis/langateam/node-mapnik/master.svg?style=flat-square
+[ci-url]: https://travis-ci.org/langateam/node-mapnik
+[daviddm-image]: http://img.shields.io/david/langateam/node-mapnik.svg?style=flat-square
+[daviddm-url]: https://david-dm.org/langateam/node-mapnik
