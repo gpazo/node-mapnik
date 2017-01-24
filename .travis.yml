@@ -1,88 +1,35 @@
+dist: trusty
 language: cpp
-
-sudo: false
-
-git:
-  depth: 10
-
-# don't re-build for tags so that [publish binary] is not re-run
-# https://github.com/travis-ci/travis-ci/issues/1532
-branches:
-  except:
-    - /^v[0-9]/
-
-env:
-  global:
-   - JOBS: "8"
-   - secure: F42vcZEgWgCMDvQXlmyYmWwFo86fUjlJbsvXEwyliaMfasjCNsbmeILU61aScn8daiCGD+vRUaRlmv+XxUSS2G8FaoI8ZjwgMo2guMwthAQJ1ohTvf4bZI0JqVYKnnZpzhGPv2zD0DTdt31l30qn2GZnnGrF4yFpPU1HW2HcMuE=
-   - secure: WRWrn3KjCaevRo2htdvn26euALTZNCDtcSlQvtH6Bc7yLdhlH5apj+qSuWqlN59f1cprFH+5aQ2zmBkVmAV2DT4IbsfszMIR6k6EetuY6VOugo/qsPW2x/MQbpFgjCbl95bYty4eUH9Bcf70Pz/S+XVewABXHWikJiLUiZBbLyE=
 
 addons:
   apt:
     sources:
      - ubuntu-toolchain-r-test
-     - llvm-toolchain-precise-3.5
     packages:
-     - clang-3.5
+     - clang-3.8
+     - libstdc++-5-dev
+
+env:
+  global:
+    - CC=clang-3.8
+    - CXX=clang++-3.8
 
 matrix:
   include:
-     # Coverage
-     - os: osx
-       osx_image: xcode7
-       compiler: clang
-       env: NODE_VERSION="4" COVERAGE=true NPM_FLAGS="--debug" PUBLISHABLE=false # node abi 46
      # Linux
      - os: linux
        compiler: clang
-       env: NODE_VERSION="6" PUBLISHABLE=true # node abi 48
-     - os: linux
-       compiler: clang
-       env: NODE_VERSION="5" PUBLISHABLE=true # node abi 47
-     - os: linux
-       compiler: clang
-       env: NODE_VERSION="4" PUBLISHABLE=true # node abi 46
-     - os: linux
-       compiler: clang
-       env: NODE_VERSION="4" NPM_FLAGS="--debug" PUBLISHABLE=true # node abi 46
-     - os: linux
-       compiler: clang
-       env: NODE_VERSION="0.10" NPM_FLAGS="--debug" PUBLISHABLE=true # node abi 11
-     - os: linux
-       compiler: clang
-       env: NODE_VERSION="0.10" PUBLISHABLE=true # node abi 11
+       env: NODE_VERSION=6
      # OS X
      - os: osx
        osx_image: xcode7
        compiler: clang
-       env: NODE_VERSION="6" PUBLISHABLE=true # node abi 48
-     - os: osx
-       osx_image: xcode7
-       compiler: clang
-       env: NODE_VERSION="5" PUBLISHABLE=true # node abi 47
-     - os: osx
-       osx_image: xcode7
-       compiler: clang
-       env: NODE_VERSION="4" PUBLISHABLE=true # node abi 46
-     - os: osx
-       osx_image: xcode7
-       compiler: clang
-       env: NODE_VERSION="4" NPM_FLAGS="--debug" PUBLISHABLE=true # node abi 46
-     - os: osx
-       osx_image: xcode7
-       compiler: clang
-       env: NODE_VERSION="0.10" NPM_FLAGS="--debug" PUBLISHABLE=true # node abi 11
-     - os: osx
-       osx_image: xcode7
-       compiler: clang
-       env: NODE_VERSION="0.10" PUBLISHABLE=true # node abi 11
+       env: NODE_VERSION=6
 
 before_install:
  - scripts/validate_tag.sh
  - export COVERAGE=${COVERAGE:-false}
  - if [[ $(uname -s) == 'Linux' ]]; then
-     export CXX="clang++-3.5";
-     export CC="clang-3.5";
      export PYTHONPATH=$(pwd)/mason_packages/.link/lib/python2.7/site-packages;
    else
      export PYTHONPATH=$(pwd)/mason_packages/.link/lib/python/site-packages;
@@ -104,19 +51,7 @@ install:
      ./scripts/build_against_sdk.sh ${NPM_FLAGS};
    fi
  - node-pre-gyp package testpackage ${NPM_FLAGS}
- - npm test
-
-before_script:
-- if [[ ${PUBLISHABLE} == true ]]; then
-    ./scripts/publish.sh;
-  fi;
 
 script:
+ - npm test
  - if [[ ${COVERAGE} == true ]]; then ./mason_packages/.link/bin/cpp-coveralls --exclude __nvm --exclude node_modules --exclude tests --build-root build --gcov-options '\-lp' --exclude tools --exclude docs --exclude sdk --exclude build/Debug/obj/gen --exclude build/Release/obj/gen --exclude src/mapnik_featureset.hpp --exclude src/mapnik_logger.hpp --exclude src/mapnik_image_view.hpp --exclude src/mapnik_geometry.hpp --exclude deps > /dev/null; fi;
- #- node --expose-gc bench/error/test_vt_abort2.js
- # ugh: always killed by travis
- #- nice -n 19 node --expose-gc bench/error/test_vt_abort.js
-
-notifications:
-  slack:
-    secure: wLpScQaDoEsVe0Bu28b62FGZBfmX3s/NK8DWcuSxEFx80k8RKPNgnMg8htamG0zRSf5htF+X6jy2P0IeUvbeupIaJwqtXvHaJYtlMTmemG/xuXLTpLp6k6giT2mWm/lp+ykuaF/PvUcZWUhSf1zhS6vwIekrMYIcDYvNXjO8DNw=
