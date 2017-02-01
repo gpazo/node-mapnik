@@ -1,56 +1,37 @@
 dist: trusty
-language: cpp
-
-addons:
-  apt:
-    sources:
-     - ubuntu-toolchain-r-test
-    packages:
-     - clang-3.8
-     - libstdc++-5-dev
+language: node_js
+node_js:
+  - 6
 
 env:
   global:
     - CC=clang-3.8
     - CXX=clang++-3.8
 
+addons:
+  postgresql: '9.6'
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - clang-3.8
+      - libstdc++-5-dev
+
 matrix:
   include:
-     # Linux
-     - os: linux
-       compiler: clang
-       env: NODE_VERSION=6
-     # OS X
-     - os: osx
-       osx_image: xcode7
-       compiler: clang
-       env: NODE_VERSION=6
+    - linux
+    - osx
+
+notifications:
+  email: false
 
 before_install:
- - scripts/validate_tag.sh
- - export COVERAGE=${COVERAGE:-false}
- - if [[ $(uname -s) == 'Linux' ]]; then
-     export PYTHONPATH=$(pwd)/mason_packages/.link/lib/python2.7/site-packages;
-   else
-     export PYTHONPATH=$(pwd)/mason_packages/.link/lib/python/site-packages;
-   fi;
- - source ./scripts/install_node.sh ${NODE_VERSION}
- - export PATH=./node_modules/.bin/:$PATH
-
-install:
- - COMMIT_MESSAGE=$(git log --format=%B --no-merges -n 1 | tr -d '\n')
- - echo ${COMMIT_MESSAGE}
- - if [[ ${COVERAGE} == true ]]; then
-     if [[ $(uname -s) == 'Linux' ]]; then
-       PYTHONUSERBASE=$(pwd)/mason_packages/.link pip install --user cpp-coveralls;
-     else
-       PYTHONUSERBASE=$(pwd)/mason_packages/.link easy_install --user cpp-coveralls;
-     fi;
-     ./scripts/build_against_sdk.sh ${NPM_FLAGS};
-   else
-     ./scripts/build_against_sdk.sh ${NPM_FLAGS};
-   fi
- - node-pre-gyp package testpackage ${NPM_FLAGS}
+  - sudo add-apt-repository ppa:mapnik/nightly-trunk -y
+  - sudo apt-get update
+  - sudo apt-get install libmapnik libmapnik-dev mapnik-utils mapnik-vector-tile -y
+  - sudo apt-get install mapnik-input-plugin-gdal mapnik-input-plugin-ogr mapnik-input-plugin-postgis -y
+  - npm i -g node-pre-gyp
+  - node-pre-gyp package testpackage ${NPM_FLAGS}
 
 script:
  - npm test
