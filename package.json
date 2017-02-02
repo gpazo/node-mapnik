@@ -61,8 +61,8 @@
     "aws-sdk": "2.0.12",
     "jshint": "^2.5.10",
     "mocha": "^3",
-    "@mapbox/sphericalmercator": "1.0.5",
-    "bytes": "~2.1.0"
+    "sphericalmercator": "1.0.5",
+    "bytes": "2.4.0"
   },
   "jshintConfig": {
     "node": true,
