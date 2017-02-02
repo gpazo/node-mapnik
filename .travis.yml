@@ -16,6 +16,9 @@ addons:
     packages:
       - clang-3.8
       - libstdc++-5-dev
+      - libprotobuf7
+      - libprotobuf-dev
+      - protobuf-compiler
 
 matrix:
   include:
@@ -32,8 +35,7 @@ before_install:
   - sudo apt-get install mapnik-input-plugin-gdal mapnik-input-plugin-ogr mapnik-input-plugin-postgis -y
 
 before_script:
-  - npm i -g node-pre-gyp
-  - node-pre-gyp package testpackage ${NPM_FLAGS}
+  - npm run prepare-test
 
 script:
  - npm test
