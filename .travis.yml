@@ -16,7 +16,7 @@ addons:
     packages:
       - clang-3.8
       - libstdc++-5-dev
-      - libprotobuf7
+      - libprotobuf8
       - libprotobuf-dev
       - protobuf-compiler
 
