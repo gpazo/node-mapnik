@@ -30,6 +30,8 @@ before_install:
   - sudo apt-get update
   - sudo apt-get install libmapnik libmapnik-dev mapnik-utils mapnik-vector-tile -y
   - sudo apt-get install mapnik-input-plugin-gdal mapnik-input-plugin-ogr mapnik-input-plugin-postgis -y
+
+before_script:
   - npm i -g node-pre-gyp
   - node-pre-gyp package testpackage ${NPM_FLAGS}
 
