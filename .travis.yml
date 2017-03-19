@@ -8,15 +8,6 @@ env:
     - CC=clang-3.8
     - CXX=clang++-3.8
 
-addons:
-  postgresql: '9.6'
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - clang-3.8
-      - libstdc++-5-dev
-
 matrix:
   include:
     - linux
@@ -26,10 +17,11 @@ notifications:
   email: false
 
 before_install:
-  - sudo add-apt-repository ppa:mapnik/nightly-trunk -y
-  - sudo apt-get update
-  - sudo apt-get install libmapnik libmapnik-dev mapnik-utils mapnik-vector-tile -y
-  - sudo apt-get install mapnik-input-plugin-gdal mapnik-input-plugin-ogr mapnik-input-plugin-postgis -y
+  - sudo add-apt-repository http://apt.langa.io/trails2
+  - sudo apt-key adv --fetch-keys https://keybase.io/langa/pgp_keys.asc
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq nodejs yarn libstdc++-5-dev clang-3.8 make
+  - sudo apt-get install -y libmapnik libmapnik-dev mapnik-input-plugin-gdal mapnik-input-plugin-postgis mapnik-utils mapnik-vector-tile
 
 before_script:
   - npm run prepare-test
