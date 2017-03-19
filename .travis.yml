@@ -17,6 +17,7 @@ notifications:
   email: false
 
 before_install:
+  - sudo apt-get install -qq software-properties-common gnupg-curl
   - sudo add-apt-repository http://apt.langa.io/trails2
   - sudo apt-key adv --fetch-keys https://keybase.io/langa/pgp_keys.asc
   - sudo apt-get update -qq
