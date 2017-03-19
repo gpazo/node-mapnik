@@ -37,7 +37,15 @@ export CC=clang-3.8
 #### 1. Install brew packages
 
 ```sh
-brew install freetype harfbuzz libpng libtiff proj icu4c jpeg webp boost gdal postgresql cairo llvm
+brew install freetype harfbuzz libpng libtiff proj icu4c jpeg webp boost gdal postgresql cairo llvm37
+```
+
+#### 2. Set Environment Variables
+
+```sh
+export CXX="clang++ -stdlib=libc++"
+export CXXFLAGS="$CXXFLAGS -nostdinc++ -I/usr/local/opt/llvm37/lib/llvm-3.7/include/c++/v1"
+export LDFLAGS="$LDFLAGS -L/usr/local/opt/llvm37/lib/llvm-3.7/lib"
 ```
 
 #### 2. Compile mapnik
@@ -47,7 +55,7 @@ git clone https://github.com/mapnik/mapnik.git
 cd mapnik
 git checkout v3.0.9
 git submodule update --init
-./configure CXX=/usr/local/opt/llvm/bin/clang++-3.8 CC=/usr/local/opt/llvm/bin/clang-3.8
+./configure
 make
 sudo make install
 ```
