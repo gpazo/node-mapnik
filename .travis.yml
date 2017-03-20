@@ -5,8 +5,8 @@ node_js:
 
 env:
   global:
-    - CC=clang-3.8
-    - CXX=clang++-3.8
+    - CC=clang-3.7
+    - CXX=clang++-3.7
     - DEBIAN_FRONTEND=noninteractive
     - DEBIAN_PRIORITY=critical
 
@@ -19,7 +19,7 @@ before_install:
   - sudo add-apt-repository http://apt.langa.io/trails2 -y
   - sudo apt-key adv --fetch-keys https://keybase.io/langa/pgp_keys.asc
   - sudo apt-get update -qq
-  - sudo apt-get install -qq nodejs yarn libstdc++-5-dev clang-3.8 make
+  - sudo apt-get install -qq nodejs yarn libstdc++-5-dev clang-3.7 make
   - sudo apt-get install -y libmapnik libmapnik-dev mapnik-input-plugin-gdal mapnik-input-plugin-postgis mapnik-utils mapnik-vector-tile
 
 before_script:
