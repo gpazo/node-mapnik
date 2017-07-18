@@ -55,12 +55,12 @@ git clone https://github.com/mapnik/mapnik.git
 cd mapnik
 git checkout v3.0.9
 git submodule update --init
-./configure
+./configure HB_LIBS=/usr/local/Cellar/harfbuzz/1.4.6_1/lib HB_INCLUDES=/usr/local/Cellar/harfbuzz/1.4.6_1/include
 make
 sudo make install
 ```
 
-## `npm install @langa/mapnik`
+## `sudo npm install @langa/mapnik`
 
 ## What is this Fork?
 
